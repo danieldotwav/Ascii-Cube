@@ -10,14 +10,15 @@ float calculateZ(int i, int j, int k);
 void calculateForSurface(float cubeX, float cubeY, float cubeZ, int ch);
 
 int main(void) {
-    printf("\x1b[2J");
+    printf("\x1b[2J"); /* Clear the screen */
     while (1) {
-        memset(asciiRenderBuffer, backgroundASCIICode, width * height);
-        memset(depthBuffer, 0, width * height * 4);
+        memset(asciiRenderBuffer, backgroundASCIICode, width * height); /* Fill the render buffer with background */
+        memset(depthBuffer, 0, width * height * sizeof(float)); /* Reset the depth buffer */
+
         cubeWidth = 20;
-        horizontalOffset = -2 * cubeWidth;
+        horizontalOffset = 1;
         
-        /* Create large cube */ 
+        /* Render the cube */ 
         for (float cubeX = -cubeWidth; cubeX < cubeWidth; cubeX += incrementSpeed) {
             for (float cubeY = -cubeWidth; cubeY < cubeWidth;
                 cubeY += incrementSpeed) {
@@ -29,45 +30,18 @@ int main(void) {
                 calculateForSurface(cubeX, cubeWidth, cubeY, FACE6);
             }
         }
-        cubeWidth = 10;
-        horizontalOffset = 1 * cubeWidth;
         
-        /* Create medium cube */
-        for (float cubeX = -cubeWidth; cubeX < cubeWidth; cubeX += incrementSpeed) {
-            for (float cubeY = -cubeWidth; cubeY < cubeWidth;
-                cubeY += incrementSpeed) {
-                calculateForSurface(cubeX, cubeY, -cubeWidth, FACE1);
-                calculateForSurface(cubeWidth, cubeY, cubeX, FACE2);
-                calculateForSurface(-cubeWidth, cubeY, -cubeX, FACE3);
-                calculateForSurface(-cubeX, cubeY, cubeWidth, FACE4);
-                calculateForSurface(cubeX, -cubeWidth, -cubeY, FACE5);
-                calculateForSurface(cubeX, cubeWidth, cubeY, FACE6);
-            }
-        }
-        cubeWidth = 5;
-        horizontalOffset = 8 * cubeWidth;
-        
-        /* Create small cube */
-        for (float cubeX = -cubeWidth; cubeX < cubeWidth; cubeX += incrementSpeed) {
-            for (float cubeY = -cubeWidth; cubeY < cubeWidth;
-                cubeY += incrementSpeed) {
-                calculateForSurface(cubeX, cubeY, -cubeWidth, FACE1);
-                calculateForSurface(cubeWidth, cubeY, cubeX, FACE2);
-                calculateForSurface(-cubeWidth, cubeY, -cubeX, FACE3);
-                calculateForSurface(-cubeX, cubeY, cubeWidth, FACE4);
-                calculateForSurface(cubeX, -cubeWidth, -cubeY, FACE5);
-                calculateForSurface(cubeX, cubeWidth, cubeY, FACE6);
-            }
-        }
-        printf("\x1b[H");
+        printf("\x1b[H"); /* Move the cursor to the top left corner of the screen */
         for (int k = 0; k < width * height; k++) {
-            putchar(k % width ? asciiRenderBuffer[k] : 10);
+            putchar(k % width ? asciiRenderBuffer[k] : 10); /* Print the buffer, with newlines at each row */
         }
 
+        /* Update rotation angles for the next frame */
         A += 0.05;
         B += 0.05;
         C += 0.01;
-        usleep(4000 * 2);
+
+        usleep(4000 * 2); /* Delay to control the speed of rotation */
     }
     return 0;
 }
