@@ -21,41 +21,12 @@ float inverseDepth; /* Reciprocal depth used to adjust size of objects based on 
 int screenX, screenY; /* Screen coordinates of the pixel to be rendered */
 int bufferIndex; /* Used to index into the depthBuffer and asciiRenderBuffer */
 
-float calculateX(int i, int j, int k) {
-    return j * sin(A) * sin(B) * cos(C) - k * cos(A) * sin(B) * cos(C) +
-        j * cos(A) * sin(C) + k * sin(A) * sin(C) + i * cos(B) * cos(C);
-}
+float calculateX(int i, int j, int k);
+float calculateY(int i, int j, int k);
+float calculateZ(int i, int j, int k);
+void calculateForSurface(float cubeX, float cubeY, float cubeZ, int ch);
 
-float calculateY(int i, int j, int k) {
-    return j * cos(A) * cos(C) + k * sin(A) * cos(C) -
-        j * sin(A) * sin(B) * sin(C) + k * cos(A) * sin(B) * sin(C) -
-        i * cos(B) * sin(C);
-}
-
-float calculateZ(int i, int j, int k) {
-    return k * cos(A) * cos(B) - j * sin(A) * cos(B) + i * sin(B);
-}
-
-void calculateForSurface(float cubeX, float cubeY, float cubeZ, int ch) {
-    x = calculateX(cubeX, cubeY, cubeZ);
-    y = calculateY(cubeX, cubeY, cubeZ);
-    z = calculateZ(cubeX, cubeY, cubeZ) + distanceFromCam;
-
-    inverseDepth = 1 / z;
-
-    screenX = (int)(width / 2 + horizontalOffset + viewScale * inverseDepth * x * 2);
-    screenY = (int)(height / 2 + viewScale * inverseDepth * y);
-
-    bufferIndex = screenX + screenY * width;
-    if (bufferIndex >= 0 && bufferIndex < width * height) {
-        if (inverseDepth > depthBuffer[bufferIndex]) {
-            depthBuffer[bufferIndex] = inverseDepth;
-            asciiRenderBuffer[bufferIndex] = ch;
-        }
-    }
-}
-
-int main() {
+int main(void) {
     printf("\x1b[2J");
     while (1) {
         memset(asciiRenderBuffer, backgroundASCIICode, width * height);
@@ -116,4 +87,38 @@ int main() {
         usleep(4000 * 2);
     }
     return 0;
+}
+
+float calculateX(int i, int j, int k) {
+    return j * sin(A) * sin(B) * cos(C) - k * cos(A) * sin(B) * cos(C) +
+        j * cos(A) * sin(C) + k * sin(A) * sin(C) + i * cos(B) * cos(C);
+}
+
+float calculateY(int i, int j, int k) {
+    return j * cos(A) * cos(C) + k * sin(A) * cos(C) -
+        j * sin(A) * sin(B) * sin(C) + k * cos(A) * sin(B) * sin(C) -
+        i * cos(B) * sin(C);
+}
+
+float calculateZ(int i, int j, int k) {
+    return k * cos(A) * cos(B) - j * sin(A) * cos(B) + i * sin(B);
+}
+
+void calculateForSurface(float cubeX, float cubeY, float cubeZ, int ch) {
+    x = calculateX(cubeX, cubeY, cubeZ);
+    y = calculateY(cubeX, cubeY, cubeZ);
+    z = calculateZ(cubeX, cubeY, cubeZ) + distanceFromCam;
+
+    inverseDepth = 1 / z;
+
+    screenX = (int)(width / 2 + horizontalOffset + viewScale * inverseDepth * x * 2);
+    screenY = (int)(height / 2 + viewScale * inverseDepth * y);
+
+    bufferIndex = screenX + screenY * width;
+    if (bufferIndex >= 0 && bufferIndex < width * height) {
+        if (inverseDepth > depthBuffer[bufferIndex]) {
+            depthBuffer[bufferIndex] = inverseDepth;
+            asciiRenderBuffer[bufferIndex] = ch;
+        }
+    }
 }
