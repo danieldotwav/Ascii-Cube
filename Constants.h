@@ -1,18 +1,21 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
+/* A custom implementation of a delay function tailored for Windows environments, where the Unix usleep function is not available */
 #include <windows.h>
 void usleep(__int64 usec) {
     HANDLE timer;
-    LARGE_INTEGER ft;
+    LARGE_INTEGER filetime;
 
-    ft.QuadPart = -(10 * usec); 
+    filetime.QuadPart = -(10 * usec); /* Convert to 100 nanosecond interval, negative value indicates relative time */
 
     timer = CreateWaitableTimer(NULL, TRUE, NULL);
-    SetWaitableTimer(timer, &ft, 0, NULL, NULL, 0);
-    WaitForSingleObject(timer, INFINITE);
-    CloseHandle(timer);
+    SetWaitableTimer(timer, &filetime, 0, NULL, NULL, 0); /* Set the timer to expire after the specified number of 100-nanosecond intervals */
+    WaitForSingleObject(timer, INFINITE); /* Calling thread to wait for timer object to signal */
+    CloseHandle(timer); /* Clean up */
 }
+
+/* Calculation Constants */
 
 float A, B, C;
 float x, y, z;
@@ -30,5 +33,15 @@ float horizontalOffset; /* Used to position the cubes on the screen */
 float inverseDepth; /* Reciprocal depth used to adjust size of objects based on their distance from the viewer */
 int screenX, screenY; /* Screen coordinates of the pixel to be rendered */
 int bufferIndex; /* Used to index into the depthBuffer and asciiRenderBuffer */
+
+
+/* ASCII Characters for the cube faces */
+
+#define FACE1 '/'
+#define FACE2 '$'
+#define FACE3 '~'
+#define FACE4 '#'
+#define FACE5 ';'
+#define FACE6 '+'
 
 #endif

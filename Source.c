@@ -21,12 +21,12 @@ int main(void) {
         for (float cubeX = -cubeWidth; cubeX < cubeWidth; cubeX += incrementSpeed) {
             for (float cubeY = -cubeWidth; cubeY < cubeWidth;
                 cubeY += incrementSpeed) {
-                calculateForSurface(cubeX, cubeY, -cubeWidth, '@');
-                calculateForSurface(cubeWidth, cubeY, cubeX, '$');
-                calculateForSurface(-cubeWidth, cubeY, -cubeX, '~');
-                calculateForSurface(-cubeX, cubeY, cubeWidth, '#');
-                calculateForSurface(cubeX, -cubeWidth, -cubeY, ';');
-                calculateForSurface(cubeX, cubeWidth, cubeY, '+');
+                calculateForSurface(cubeX, cubeY, -cubeWidth, FACE1);
+                calculateForSurface(cubeWidth, cubeY, cubeX, FACE2);
+                calculateForSurface(-cubeWidth, cubeY, -cubeX, FACE3);
+                calculateForSurface(-cubeX, cubeY, cubeWidth, FACE4);
+                calculateForSurface(cubeX, -cubeWidth, -cubeY, FACE5);
+                calculateForSurface(cubeX, cubeWidth, cubeY, FACE6);
             }
         }
         cubeWidth = 10;
@@ -36,12 +36,12 @@ int main(void) {
         for (float cubeX = -cubeWidth; cubeX < cubeWidth; cubeX += incrementSpeed) {
             for (float cubeY = -cubeWidth; cubeY < cubeWidth;
                 cubeY += incrementSpeed) {
-                calculateForSurface(cubeX, cubeY, -cubeWidth, '@');
-                calculateForSurface(cubeWidth, cubeY, cubeX, '$');
-                calculateForSurface(-cubeWidth, cubeY, -cubeX, '~');
-                calculateForSurface(-cubeX, cubeY, cubeWidth, '#');
-                calculateForSurface(cubeX, -cubeWidth, -cubeY, ';');
-                calculateForSurface(cubeX, cubeWidth, cubeY, '+');
+                calculateForSurface(cubeX, cubeY, -cubeWidth, FACE1);
+                calculateForSurface(cubeWidth, cubeY, cubeX, FACE2);
+                calculateForSurface(-cubeWidth, cubeY, -cubeX, FACE3);
+                calculateForSurface(-cubeX, cubeY, cubeWidth, FACE4);
+                calculateForSurface(cubeX, -cubeWidth, -cubeY, FACE5);
+                calculateForSurface(cubeX, cubeWidth, cubeY, FACE6);
             }
         }
         cubeWidth = 5;
@@ -51,12 +51,12 @@ int main(void) {
         for (float cubeX = -cubeWidth; cubeX < cubeWidth; cubeX += incrementSpeed) {
             for (float cubeY = -cubeWidth; cubeY < cubeWidth;
                 cubeY += incrementSpeed) {
-                calculateForSurface(cubeX, cubeY, -cubeWidth, '@');
-                calculateForSurface(cubeWidth, cubeY, cubeX, '$');
-                calculateForSurface(-cubeWidth, cubeY, -cubeX, '~');
-                calculateForSurface(-cubeX, cubeY, cubeWidth, '#');
-                calculateForSurface(cubeX, -cubeWidth, -cubeY, ';');
-                calculateForSurface(cubeX, cubeWidth, cubeY, '+');
+                calculateForSurface(cubeX, cubeY, -cubeWidth, FACE1);
+                calculateForSurface(cubeWidth, cubeY, cubeX, FACE2);
+                calculateForSurface(-cubeWidth, cubeY, -cubeX, FACE3);
+                calculateForSurface(-cubeX, cubeY, cubeWidth, FACE4);
+                calculateForSurface(cubeX, -cubeWidth, -cubeY, FACE5);
+                calculateForSurface(cubeX, cubeWidth, cubeY, FACE6);
             }
         }
         printf("\x1b[H");
