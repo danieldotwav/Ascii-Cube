@@ -1,37 +1,25 @@
-#define _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS /* Disable Windows Warnings */
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
-
-#include <windows.h>
-void usleep(__int64 usec)
-{
-    HANDLE timer;
-    LARGE_INTEGER ft;
-
-    ft.QuadPart = -(10 * usec); // Convert to 100 nanosecond interval, negative value indicates relative time
-
-    timer = CreateWaitableTimer(NULL, TRUE, NULL);
-    SetWaitableTimer(timer, &ft, 0, NULL, NULL, 0);
-    WaitForSingleObject(timer, INFINITE);
-    CloseHandle(timer);
-}
+#include "Constants.h"
 
 float A, B, C;
 float x, y, z;
 
-float cubeWidth = 20;
-int width = 160, height = 44;
-float zBuffer[160 * 44];
-char buffer[160 * 44];
-int backgroundASCIICode = '.';
-int distanceFromCam = 100;
-float K1 = 40;
+float cubeWidth = 20; /* Width of the cube */
+int width = 160, height = 44; /* Width and height of the screen */
+float depthBuffer[160 * 44]; /* Stores the inverse of the z - coordinate(depth) for each pixel on the screen, to manage which object is closer to the viewer and should therefore be visible */
+char asciiRenderBuffer[160 * 44]; /* Stores the ASCII character to be rendered on the screen */
+int backgroundASCIICode = '-'; /* ASCII code for the background */
+int distanceFromCam = 100; /* Distance of the camera from the origin */
+float viewScale = 40; /* Scale factor used in the perspective projection calculation to adjust the size of the rendered objects */
 
-float incrementSpeed = 0.6;
-float horizontalOffset;
-float ooz;
-int xp, yp, idx;
+float incrementSpeed = 0.6; 
+float horizontalOffset; /* Used to position the cubes on the screen */
+float inverseDepth; /* Reciprocal depth used to adjust size of objects based on their distance from the viewer */
+int screenX, screenY; /* Screen coordinates of the pixel to be rendered */
+int bufferIndex; /* Used to index into the depthBuffer and asciiRenderBuffer */
 
 float calculateX(int i, int j, int k) {
     return j * sin(A) * sin(B) * cos(C) - k * cos(A) * sin(B) * cos(C) +
@@ -53,16 +41,16 @@ void calculateForSurface(float cubeX, float cubeY, float cubeZ, int ch) {
     y = calculateY(cubeX, cubeY, cubeZ);
     z = calculateZ(cubeX, cubeY, cubeZ) + distanceFromCam;
 
-    ooz = 1 / z;
+    inverseDepth = 1 / z;
 
-    xp = (int)(width / 2 + horizontalOffset + K1 * ooz * x * 2);
-    yp = (int)(height / 2 + K1 * ooz * y);
+    screenX = (int)(width / 2 + horizontalOffset + viewScale * inverseDepth * x * 2);
+    screenY = (int)(height / 2 + viewScale * inverseDepth * y);
 
-    idx = xp + yp * width;
-    if (idx >= 0 && idx < width * height) {
-        if (ooz > zBuffer[idx]) {
-            zBuffer[idx] = ooz;
-            buffer[idx] = ch;
+    bufferIndex = screenX + screenY * width;
+    if (bufferIndex >= 0 && bufferIndex < width * height) {
+        if (inverseDepth > depthBuffer[bufferIndex]) {
+            depthBuffer[bufferIndex] = inverseDepth;
+            asciiRenderBuffer[bufferIndex] = ch;
         }
     }
 }
@@ -70,11 +58,12 @@ void calculateForSurface(float cubeX, float cubeY, float cubeZ, int ch) {
 int main() {
     printf("\x1b[2J");
     while (1) {
-        memset(buffer, backgroundASCIICode, width * height);
-        memset(zBuffer, 0, width * height * 4);
+        memset(asciiRenderBuffer, backgroundASCIICode, width * height);
+        memset(depthBuffer, 0, width * height * 4);
         cubeWidth = 20;
         horizontalOffset = -2 * cubeWidth;
-        // first cube
+        
+        // Create large cube
         for (float cubeX = -cubeWidth; cubeX < cubeWidth; cubeX += incrementSpeed) {
             for (float cubeY = -cubeWidth; cubeY < cubeWidth;
                 cubeY += incrementSpeed) {
@@ -88,7 +77,8 @@ int main() {
         }
         cubeWidth = 10;
         horizontalOffset = 1 * cubeWidth;
-        // second cube
+        
+        // Create medium cube
         for (float cubeX = -cubeWidth; cubeX < cubeWidth; cubeX += incrementSpeed) {
             for (float cubeY = -cubeWidth; cubeY < cubeWidth;
                 cubeY += incrementSpeed) {
@@ -102,7 +92,8 @@ int main() {
         }
         cubeWidth = 5;
         horizontalOffset = 8 * cubeWidth;
-        // third cube
+        
+        // Create small cube
         for (float cubeX = -cubeWidth; cubeX < cubeWidth; cubeX += incrementSpeed) {
             for (float cubeY = -cubeWidth; cubeY < cubeWidth;
                 cubeY += incrementSpeed) {
@@ -116,13 +107,13 @@ int main() {
         }
         printf("\x1b[H");
         for (int k = 0; k < width * height; k++) {
-            putchar(k % width ? buffer[k] : 10);
+            putchar(k % width ? asciiRenderBuffer[k] : 10);
         }
 
         A += 0.05;
         B += 0.05;
         C += 0.01;
-        usleep(8000 * 2);
+        usleep(4000 * 2);
     }
     return 0;
 }
