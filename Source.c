@@ -4,23 +4,6 @@
 #include <string.h>
 #include "Constants.h"
 
-float A, B, C;
-float x, y, z;
-
-float cubeWidth = 20; /* Width of the cube */
-int width = 160, height = 44; /* Width and height of the screen */
-float depthBuffer[160 * 44]; /* Stores the inverse of the z - coordinate(depth) for each pixel on the screen, to manage which object is closer to the viewer and should therefore be visible */
-char asciiRenderBuffer[160 * 44]; /* Stores the ASCII character to be rendered on the screen */
-int backgroundASCIICode = '-'; /* ASCII code for the background */
-int distanceFromCam = 100; /* Distance of the camera from the origin */
-float viewScale = 40; /* Scale factor used in the perspective projection calculation to adjust the size of the rendered objects */
-
-float incrementSpeed = 0.6; 
-float horizontalOffset; /* Used to position the cubes on the screen */
-float inverseDepth; /* Reciprocal depth used to adjust size of objects based on their distance from the viewer */
-int screenX, screenY; /* Screen coordinates of the pixel to be rendered */
-int bufferIndex; /* Used to index into the depthBuffer and asciiRenderBuffer */
-
 float calculateX(int i, int j, int k);
 float calculateY(int i, int j, int k);
 float calculateZ(int i, int j, int k);
@@ -34,7 +17,7 @@ int main(void) {
         cubeWidth = 20;
         horizontalOffset = -2 * cubeWidth;
         
-        // Create large cube
+        /* Create large cube */ 
         for (float cubeX = -cubeWidth; cubeX < cubeWidth; cubeX += incrementSpeed) {
             for (float cubeY = -cubeWidth; cubeY < cubeWidth;
                 cubeY += incrementSpeed) {
@@ -49,7 +32,7 @@ int main(void) {
         cubeWidth = 10;
         horizontalOffset = 1 * cubeWidth;
         
-        // Create medium cube
+        /* Create medium cube */
         for (float cubeX = -cubeWidth; cubeX < cubeWidth; cubeX += incrementSpeed) {
             for (float cubeY = -cubeWidth; cubeY < cubeWidth;
                 cubeY += incrementSpeed) {
@@ -64,7 +47,7 @@ int main(void) {
         cubeWidth = 5;
         horizontalOffset = 8 * cubeWidth;
         
-        // Create small cube
+        /* Create small cube */
         for (float cubeX = -cubeWidth; cubeX < cubeWidth; cubeX += incrementSpeed) {
             for (float cubeY = -cubeWidth; cubeY < cubeWidth;
                 cubeY += incrementSpeed) {
